@@ -1,74 +1,48 @@
-/* Equations and Inequalities in One Variable Linear Equations
-Quadratic and Rational Equations
-Linear, Quadratic and Rational Inequalities
-Equations and Inequalities Involving Absolute Values
-References
- */
-
 class EquationsAndInequalitiesInOneVariable(val expression: String, val variable: Char) {
 
-    private val expressionsList = arrayListOf<String>()
+    private lateinit var expressions: Pair<String, String>
+    private lateinit var operatorUsed: String
+    private var answer: String = ""
 
     init {
-        parseExpression(expression)
+        solve2expressions(expression, variable)
     }
 
     // Parse expression like "3x+5=2x+10" into left and right sides
-    private fun parseExpression(expr: String) {
+    private fun parseExpression(expr: String): Triple<String, Char, String> {
         val operatorRegex = Regex("(<=|>=|=|<|>)")
+
         val match = operatorRegex.find(expr) ?: throw IllegalArgumentException("No valid operator found")
-        val split = expr.split(match.value)
+        operatorUsed = match.value  // Save to class var
+
+        val split = expr.split(operatorRegex)
+
         if (split.size != 2) throw IllegalArgumentException("Invalid equation format")
-        expressionsList.add(split[0])
-        expressionsList.add(split[1])
+
+        val left = split[0].trim()
+        val right = split[1].trim()
+
+        expressions = Pair(left, right)
+
+        return Triple(left, operatorUsed[0], right) // return as requested
     }
 
-    // Solve linear equations of the form "ax + b = cx + d"
-    fun solve2expressions(left: String = expressionsList[0], right: String = expressionsList[1]): String {
-        val (leftCoeff, leftConst) = simplifyExpression(left)
-        val (rightCoeff, rightConst) = simplifyExpression(right)
+    fun solve2expressions(expression: String = this.expression, variable: Char): String {
+        val parsed = parseExpression(expression)
+        val leftExpr = simplifyExpression(parsed.first)
+        val rightExpr = simplifyExpression(parsed.third)
 
-        val finalCoeff = leftCoeff - rightCoeff
-        val finalConst = rightConst - leftConst
-
-        return when {
-            finalCoeff == 0.0 && finalConst == 0.0 -> "All real numbers"
-            finalCoeff == 0.0 -> "No solution"
-            else -> {
-                val result = finalConst / finalCoeff
-                "$variable = ${"%.2f".format(result)}"
-            }
-        }
+        answer = "$leftExpr ${parsed.second} $rightExpr"
+        return answer
     }
 
-    // Simplify expressions: return Pair(coefficient of x, constant)
-    private fun simplifyExpression(expr: String): Pair<Double, Double> {
-        var expression = expr.replace(" ", "")
-        if (expression.isNotEmpty() && expression[0] != '-') expression = "+$expression"
+    private fun simplifyExpression(expr: String): String {
+        // Remove spaces and group terms – basic step
+        val cleaned = expr.replace(" ", "")
 
-        val termRegex = Regex("([+-])((\\d*\\.?\\d*)?${variable}?\\^?[0-9]?)")
-        val matches = termRegex.findAll(expression)
-
-        var coefficient = 0.0
-        var constant = 0.0
-
-        for (match in matches) {
-            val sign = match.groupValues[1]
-            val term = match.groupValues[2]
-
-            if (term.contains(variable)) {
-                // Extract coefficient of x
-                val coeffStr = term.replace(variable.toString(), "").ifEmpty { "1" }
-                val coeff = coeffStr.toDoubleOrNull() ?: 1.0
-                coefficient += if (sign == "-") -coeff else coeff
-            } else {
-                // Constant term
-                val num = term.toDoubleOrNull() ?: continue
-                constant += if (sign == "-") -num else num
-            }
-        }
-
-        return Pair(coefficient, constant)
+        // Future: parse tokens, simplify parentheses, etc.
+        // For now, return as-is
+        return cleaned
     }
 
     fun higherOrder(): String {
