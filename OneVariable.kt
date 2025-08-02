@@ -12,6 +12,10 @@ class OneVariable(val expression: String) {
 
         var expression = expression.replace(" ", "")
 
+        if (!expression.matches(Regex("^[a-zA-Z0-9^+\\-*/()\\[\\]{}<>=]+$"))){
+            throw IllegalArgumentException("Expression contains invalid characters. Only a-z, A-Z, 0-9, ^, +, -, *, /, (, ), [, ], {, }, <, >, = are allowed.")
+        }
+
         // Ensure all groupings have matching pairs
         val stack = mutableListOf<Char>()
         for (char in expression) {
@@ -64,19 +68,45 @@ class OneVariable(val expression: String) {
         return answer
     }
 
+
     private fun simplifyExpression(expression: String): String {
 
+        // If no parentheses/brackets/braces, return as is
         if (!expression.contains(Regex("[\\[\\{\\(]")))
-        return expression
+            return expression
 
-        else{
-            //remove parenthesis layer by layer
-        return simplifyExpression(expression)
+        // Find all non-nested parentheses/brackets/braces
+        val pattern = Regex("""([a-zA-Z0-9]*)?([\(\[\{])([^()\[\]\{\}]*)[\)\]\}](\^([a-zA-Z0-9]+))?""")
+        var newExpr = expression
+        val matches = pattern.findAll(expression).toList()
+
+        if (matches.isEmpty()) return expression // fallback
+
+        for (match in matches) {
+            val fullMatch = match.value
+            val multiplier = match.groups[1]?.value ?: ""
+            val baseStructure = match.groups[3]?.value ?: ""
+            val exponent = match.groups[5]?.value
+
+            var simplified = simplifyExpression(baseStructure)
+
+            // Handle exponents
+            if (exponent != null) {
+                simplified = expandExponent(simplified, exponent)
+            }
+
+            // Handle multipliers (string concatenation)
+            if (multiplier.isNotEmpty()) {
+                simplified = "$multiplier*($simplified)"
+            }
+
+            // Replace the full match in the expression with the simplified version
+            newExpr = newExpr.replace(fullMatch, simplified)
         }
-        
+
+        // Recursively simplify until no more parentheses
+        return simplifyExpression(newExpr)
     }
-
-
 
     fun rational(): String {
         // Placeholder for handling rational expressions (fractions)
