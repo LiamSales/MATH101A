@@ -97,8 +97,13 @@ class OneVariable(val expression: String) {
     }
 
     fun computeArithmetic(expression: String): String {
-        // Placeholder stub — this should evaluate basic arithmetic like "2+3*4"
-        // You’ll replace this with your actual logic or parser
+
+        // separate the terms by exponents, should be in a linked list of linked lists place the coefficients as values (double), including the signs until there is nothing left in the original string
+        // outer layer should be x^n with x^0 being the arraylist of arraylists holding the constant
+        // add everything in the same list
+        // reconstruct the string and save in expression by putting the stuff in the summed arraylist and adding the variable char at the end of each until x^2, x^1 should not have ^1, just x and nothing should be in the x^0
+        // that should be simplest form
+
         return expression // Temporary: returns as-is
     }
 
