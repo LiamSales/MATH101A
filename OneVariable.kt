@@ -75,14 +75,11 @@ class OneVariable(val expression: String) {
         if (!expression.contains(Regex("[\\[\\{\\(]")))
             return expression
 
-        val pattern = Regex("""([a-zA-Z0-9]*)?([\(\[\{])([^()\[\]\{\}]*)[\)\]\}](\^([a-zA-Z0-9]+))?""")
-        var newExpr = expression
-        val matches = pattern.findAll(expression).toList()
+        //val pattern = Regex("""([a-zA-Z0-9]*)?([\(\[\{])([^()\[\]\{\}]*)[\)\]\}](\^([a-zA-Z0-9]+))?""")
+        //var newExpr = expression
+        val simpleGroups = pattern.findAll(expression).toList()
 
-        if (matches.isEmpty())
-            return expression
-
-        for (match in matches) {
+        for (simpleGroups in simplestGroups) {
             val fullMatch = match.value
        //   val innerExpr = match.groupValues[3]
         //  val exponent = match.groupValues[5] // May be empty
@@ -91,16 +88,15 @@ class OneVariable(val expression: String) {
             var simplified = computeArithmetic(innerExpr)
 
             // Handle exponentiation (future expansion)
-            if (exponent.isNotEmpty()) {
-                // Placeholder for future implementation of exponent expansion
-                simplified = "$simplified^$exponent"
+            // if (^ is found, see if it has a grouping directly afterwards, // if grouped check if has exponent, if none, simplify to int, truncate decimal
+                // 
             }
 
             // TODO: Check if what's to the left or right is not a sign, and if so, multiply
 
 
             // Replace the match in the expression
-            newExpr = newExpr.replace(fullMatch, simplified)
+      //      newExpr = newExpr.replace(fullMatch, simplified)
         }
 
         return simplifyExpression(newExpr)
@@ -125,7 +121,14 @@ class OneVariable(val expression: String) {
 
     }
 
-    fun expandExponent(): String {
+    fun expandExponent(base: String, exponent: Int): String {
+
+        //just duplicate the base the number of times the string is
+
         return "Rational solving not yet implemented."
+    }
+
+    fun multiply(multiplicands: ArrayList): String{
+        
     }
 }
