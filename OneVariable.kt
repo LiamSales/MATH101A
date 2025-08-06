@@ -17,7 +17,10 @@ class OneVariable(val expression: String) {
 
     private fun parseExpression(expression: String): ParsedExpression {
 
+        //remove whitespace
         var expression = expression.replace(" ", "")
+
+        //validation:
 
         if (!expression.matches(Regex("^[a-zA-Z0-9^+\\-*/()\\[\\]{}<>=]+$"))) {
             throw IllegalArgumentException("Expression contains invalid characters. Only a-z, A-Z, 0-9, ^, +, -, *, /, (, ), [, ], {, }, <, >, = are allowed.")
@@ -56,14 +59,19 @@ class OneVariable(val expression: String) {
     }
 
     fun solve2expressions(expression: String = this.expression): String {
+       
         val parsed = parseExpression(expression)
         val leftExpr = simplifyExpression(parsed.left)
         val rightExpr = simplifyExpression(parsed.right)
+        
+        //pass both left and right to transposeTerms, returns left full of variables, right full of constants
         answer = "$leftExpr ${parsed.operator} $rightExpr"
+       
         return answer
     }
 
     fun simplifyExpression(expression: String): String {
+
         if (!expression.contains(Regex("[\\[\\{\\(]")))
             return expression
 
@@ -71,7 +79,8 @@ class OneVariable(val expression: String) {
         var newExpr = expression
         val matches = pattern.findAll(expression).toList()
 
-        if (matches.isEmpty()) return expression
+        if (matches.isEmpty())
+            return expression
 
         for (match in matches) {
             val fullMatch = match.value
@@ -89,6 +98,7 @@ class OneVariable(val expression: String) {
 
             // TODO: Check if what's to the left or right is not a sign, and if so, multiply
 
+
             // Replace the match in the expression
             newExpr = newExpr.replace(fullMatch, simplified)
         }
@@ -96,7 +106,11 @@ class OneVariable(val expression: String) {
         return simplifyExpression(newExpr)
     }
 
-    fun computeArithmetic(expression: String): String {
+    fun computeArithmetic(expression: String): ArrayList<Double> {
+
+        val terms = ArrayList<Double>()
+        val simplifiedTerms = ArrayList<Double>()
+        val outerList = ArrayList<ArrayList<Double>> = ArrayList()
 
         // separate the terms by exponents, should be in a linked list of linked lists place the coefficients as values (double), including the signs until there is nothing left in the original string
         // outer layer should be x^n with x^0 being the arraylist of arraylists holding the constant
@@ -104,7 +118,11 @@ class OneVariable(val expression: String) {
         // reconstruct the string and save in expression by putting the stuff in the summed arraylist and adding the variable char at the end of each until x^2, x^1 should not have ^1, just x and nothing should be in the x^0
         // that should be simplest form
 
-        return expression // Temporary: returns as-is
+        return simplifiedTerms
+    }
+
+    fun transposeTerms(simplifiedLeft: ArrayList<Double>, simplifiedRight: ArrayList<Double>): Pair<String,String>{
+
     }
 
     fun expandExponent(): String {
