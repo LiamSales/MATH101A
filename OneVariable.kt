@@ -72,35 +72,30 @@ class OneVariable(val expression: String) {
 
     fun simplifyExpression(expression: String): String {
 
+        //should not have * or / either
         if (!expression.contains(Regex("[\\[\\{\\(]")))
             return expression
 
+        //collect all simplest groups
         //val pattern = Regex("""([a-zA-Z0-9]*)?([\(\[\{])([^()\[\]\{\}]*)[\)\]\}](\^([a-zA-Z0-9]+))?""")
-        //var newExpr = expression
         val simpleGroups = pattern.findAll(expression).toList()
 
         for (simpleGroups in simplestGroups) {
-            val fullMatch = match.value
-       //   val innerExpr = match.groupValues[3]
-        //  val exponent = match.groupValues[5] // May be empty
 
-            // Compute the simplified form of the inner expression
-            var simplified = computeArithmetic(innerExpr)
+            // Compute the simplified form of the inner expression then replace entirely
 
-            // Handle exponentiation (future expansion)
-            // if (^ is found, see if it has a grouping directly afterwards, // if grouped check if has exponent, if none, simplify to int, truncate decimal
-                // 
+            // if ^ is found directly afterwards, see if it has a grouping directly afterwards, // if grouped check if has exponent, if none, simplify to int, truncate decimal
             }
 
-            // TODO: Check if what's to the left or right is not a sign, and if so, multiply
+            // TODO: Check if what's to the left or right is not a sign or null, and if so, multiply or divide then simplify
 
+            //transpose terms
 
-            // Replace the match in the expression
-      //      newExpr = newExpr.replace(fullMatch, simplified)
+            //compute arithmetic 
+        
+            //return in simplified form
         }
 
-        return simplifyExpression(newExpr)
-    }
 
     fun computeArithmetic(expression: String): ArrayList<Double> {
 
@@ -131,4 +126,6 @@ class OneVariable(val expression: String) {
     fun multiply(multiplicands: ArrayList): String{
         
     }
+
+    fun divide()
 }
