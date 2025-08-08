@@ -22,17 +22,18 @@ class OneVariable(val expression: String) {
 
         //validation:
 
-        if (!expression.matches(Regex("^[a-zA-Z0-9^+\\-*/()\\[\\]{}<>=]+$"))) {
-            throw IllegalArgumentException("Expression contains invalid characters. Only a-z, A-Z, 0-9, ^, +, -, *, /, (, ), [, ], {, }, <, >, = are allowed.")
+        if (!expression.matches(Regex("^[a-zA-Z0-9^+\\-*/()\\[\\]{}<>=|]+$"))) {
+            throw IllegalArgumentException("Expression contains invalid characters. Only a-z, A-Z, 0-9, ^, +, -, *, /, (, ), [, ], {, },|, <, >, = are allowed.")
         }
 
         val stack = mutableListOf<Char>()
         for (char in expression) {
             when (char) {
-                '(', '[', '{' -> stack.add(char)
+                '(', '[', '{', '|'-> stack.add(char)
                 ')' -> if (stack.isEmpty() || stack.removeAt(stack.lastIndex) != '(') throw IllegalArgumentException("Unmatched parentheses in the expression")
                 ']' -> if (stack.isEmpty() || stack.removeAt(stack.lastIndex) != '[') throw IllegalArgumentException("Unmatched brackets in the expression")
                 '}' -> if (stack.isEmpty() || stack.removeAt(stack.lastIndex) != '{') throw IllegalArgumentException("Unmatched braces in the expression")
+                '|' -> if (stack.isEmpty() || stack.removeAt(stack.lastIndex) != '|') throw IllegalArgumentException("Unmatched vertical bar in the expression")
             }
         }
         if (stack.isNotEmpty()) throw IllegalArgumentException("Unmatched groupings in the expression")
@@ -78,16 +79,21 @@ class OneVariable(val expression: String) {
 
         //collect all simplest groups
         //val pattern = Regex("""([a-zA-Z0-9]*)?([\(\[\{])([^()\[\]\{\}]*)[\)\]\}](\^([a-zA-Z0-9]+))?""")
+        //edit to include absolute val
         val simpleGroups = pattern.findAll(expression).toList()
 
         for (simpleGroups in simplestGroups) {
 
             // Compute the simplified form of the inner expression then replace entirely
+            // if within an absolute value
 
             // if ^ is found directly afterwards, see if it has a grouping directly afterwards, // if grouped check if has exponent, if none, simplify to int, truncate decimal
             }
 
-            // TODO: Check if what's to the left or right is not a sign or null, and if so, multiply or divide then simplify
+            // TODO: Check if what's to the left or right is not a sign or null, and if so, multiply 
+            // see if term has / symbol, divide()
+
+            // if the denominator of the term has x, call rational exp
 
             //transpose terms
 
@@ -127,5 +133,13 @@ class OneVariable(val expression: String) {
         
     }
 
-    fun divide()
+    fun divide(){ // preferrably in exact values no estimation
+
+    fun absoluteValue{
+
+    }
+
+    fun rationalExpression{
+
+    }
 }
